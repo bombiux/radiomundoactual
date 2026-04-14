@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-body;
+  }
+}
+
+@layer components {
+  .hero-gradient {
+    background: linear-gradient(135deg, #001e40 0%, #003366 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-gradient::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(146, 252, 94, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .glass-player {
+    @apply bg-primary-container/80 backdrop-blur-xl;
+  }
+
+  .editorial-tag {
+    @apply font-body text-xs font-bold uppercase tracking-wider text-secondary;
+  }
+
+  .display-lg {
+    @apply font-headline text-5xl md:text-7xl font-bold tracking-tight;
+  }
+
+  .headline-lg {
+    @apply font-headline text-3xl md:text-4xl font-bold tracking-tight;
+  }
+
+  .label-md {
+    @apply font-body text-sm font-medium tracking-wide;
+  }
+}
+
+/* Tonal Layering Utilities */
+.surface-low { @apply bg-surface-container-low; }
+.surface-lowest { @apply bg-surface-container-lowest; }
+.surface-highest { @apply bg-surface-container-highest; }
+
+.ghost-border {
+  outline: 1px solid rgba(195, 198, 209, 0.15);
+}

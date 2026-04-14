@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Mundo Actual</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!-- Style -->
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+<body class="bg-surface text-on-surface font-body overflow-x-hidden pb-32">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md px-6 py-4 flex justify-center items-center ghost-border">
+        <div class="flex items-center gap-4">
+            <img src="/src/assets/logo.png" alt="Radio Mundo Actual" class="h-20 w-auto object-contain">
+            <span class="bg-secondary-fixed text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest">EN VIVO</span>
+        </div>
+    </header>
+
+    <main class="mt-20">
+        <!-- Hero Section -->
+        <section class="hero-gradient min-h-[80vh] flex items-center px-6 md:px-12 py-20 text-on-primary relative overflow-hidden">
+            <div class="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center z-10">
+                <div class="space-y-6">
+                    <div class="flex items-center gap-3">
+                         <div class="w-3 h-3 rounded-full bg-secondary-fixed animate-pulse shadow-[0_0_15px_rgba(146,252,94,0.5)]"></div>
+                         <span class="editorial-tag text-secondary-fixed uppercase tracking-[0.2em]">EN VIVO AHORA</span>
+                    </div>
+                    <div class="space-y-2">
+                        <h1 id="hero-titulo" class="display-lg">Cargando...</h1>
+                        <p id="hero-locutores" class="text-2xl md:text-3xl text-secondary-fixed/90 font-light italic"></p>
+                    </div>
+                    <p id="hero-descripcion" class="text-xl opacity-80 max-w-xl font-light leading-relaxed"></p>
+                </div>
+                <div class="relative flex justify-center">
+                    <div class="aspect-[4/5] w-full max-w-[400px] rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] rotate-3 hover:rotate-0 transition-transform duration-700 ghost-border">
+                        <img id="hero-imagen" src="" alt="Programa en Vivo" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Player -->
+        <div class="px-6 md:px-12 -mt-12 relative z-20">
+            <div class="glass-player px-8 py-6 rounded-xl flex items-center justify-between shadow-2xl">
+                <div class="flex items-center gap-8 flex-grow">
+                    <button id="play-button" class="w-16 h-16 rounded-full bg-secondary-fixed text-on-secondary-container flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-secondary-fixed/20">
+                        <span class="material-symbols-outlined text-4xl" id="play-icon">play_arrow</span>
+                    </button>
+                    <audio id="radio-audio" src="https://stream.zeno.fm/0v7shv53u08uv" preload="none"></audio>
+                    <div class="hidden md:block flex-grow">
+                        <div class="flex items-end gap-1.5 h-10" id="waveform">
+                            <div class="w-1 bg-secondary-fixed h-4 animate-[pulse_1s_infinite]"></div>
+                            <div class="w-1 bg-secondary-fixed h-8 animate-[pulse_1.2s_infinite]"></div>
+                            <div class="w-1 bg-secondary-fixed h-5 animate-[pulse_0.8s_infinite]"></div>
+                            <div class="w-1 bg-secondary-fixed h-9 animate-[pulse_1.5s_infinite]"></div>
+                            <div class="w-1 bg-secondary-fixed h-6 animate-[pulse_1.1s_infinite]"></div>
+                            <div class="w-1 bg-secondary-fixed h-10 animate-[pulse_1s_infinite]"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6 ml-8">
+                    <p class="text-secondary-fixed font-bold text-sm hidden sm:block">Radio Mundo Actual</p>
+                    <button class="text-on-primary/70 hover:text-on-primary">
+                        <span class="material-symbols-outlined">volume_up</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="px-6 md:px-12 py-24 grid md:grid-cols-3 gap-12">
+            <!-- Left: Programming -->
+            <section class="md:col-span-2 space-y-8">
+                <div>
+                    <span class="editorial-tag">RADIO MUNDO ACTUAL</span>
+                    <h2 class="headline-lg text-primary">Programación de Hoy</h2>
+                </div>
+                <div class="space-y-0" id="schedule-container"></div>
+            </section>
+
+            <!-- Right: Advertising -->
+            <aside class="space-y-8">
+                <div>
+                    <span class="editorial-tag">PUBLICIDAD</span>
+                    <h2 class="headline-lg text-primary">Promociones</h2>
+                </div>
+                <div class="space-y-6">
+                    <!-- Anuncio Lotería -->
+                    <div id="loteria-promo" class="relative rounded-lg overflow-hidden group aspect-square cursor-pointer bg-white border border-on-primary/10 shadow-sm">
+                        <img src="/src/assets/loteriaADS.jpeg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <!-- Texto a la derecha para despejar el QR del lado izquierdo -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex flex-col justify-end items-end p-4 pb-2 text-right">
+                            <span class="editorial-tag text-secondary-fixed text-[11px] mb-0.5 drop-shadow-lg font-bold">LOTERÍA NACIONAL</span>
+                            <h3 class="text-[14px] font-extrabold text-white drop-shadow-lg leading-tight uppercase tracking-tight">Resultados del Sorteo</h3>
+                        </div>
+                    </div>
+                    <!-- Anuncio Fallback -->
+                    <div class="relative rounded-lg overflow-hidden aspect-square border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-center p-8 bg-surface-lowest group hover:border-primary/40 transition-colors cursor-pointer">
+                        <div class="w-16 h-16 rounded-full bg-primary/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-primary text-3xl">add_business</span>
+                        </div>
+                        <h3 class="font-bold text-primary mb-1">Espacio Disponible</h3>
+                        <p class="text-xs text-on-surface-variant opacity-70">Llega a miles de oyentes diarios. <br>¡Anúnciate con nosotros!</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Modal Lotería -->
+    <div id="loteria-modal" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-surface w-full max-w-5xl h-[85vh] rounded-2xl overflow-hidden relative flex flex-col">
+            <div class="p-4 border-b flex justify-between items-center bg-surface-low">
+                <h3 class="font-bold text-primary">Lotería Nacional - Resultados</h3>
+                <button id="close-modal" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-on-surface/10">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="flex-grow bg-white">
+                <iframe src="https://www.loterianacional.com.ni/resultados/" class="w-full h-full border-none" loading="lazy"></iframe>
+            </div>
+            <div class="p-4 bg-surface-low text-center">
+                <a href="https://www.loterianacional.com.ni/resultados/" target="_blank" class="text-xs text-primary underline">Abrir en sitio oficial</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="surface-low px-6 md:px-12 py-20 border-t border-on-primary/10">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
+            <!-- Brand & Location -->
+            <div class="space-y-6">
+                <img src="/src/assets/logo.png" alt="Radio Mundo Actual" class="h-16 w-auto object-contain grayscale opacity-70">
+                <div class="flex items-start gap-4 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-secondary-fixed">location_on</span>
+                    <p class="label-md">Managua Nicaragua<br>Centro America</p>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="space-y-6">
+                <h3 class="headline-sm text-primary">Contáctenos</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-secondary-fixed">phone</span>
+                        <a href="tel:+50577705349" class="label-md hover:text-primary transition-colors">+505 7770 5349</a>
+                    </div>
+                    <div class="flex items-center gap-4 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-secondary-fixed">mail</span>
+                        <a href="mailto:norma@radiomundoactual.com" class="label-md hover:text-primary transition-colors">norma@radiomundoactual.com</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="space-y-6">
+                <h3 class="headline-sm text-primary">Síguenos</h3>
+                <p class="label-md text-on-surface-variant mb-4">Radio Mundo Actual Oficial</p>
+                <div class="flex gap-4">
+                    <a href="https://www.facebook.com/people/Radio-Mundo-Actual/61568659528615/" target="_blank" class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-6xl mx-auto mt-20 pt-8 border-t border-on-primary/5 text-center space-y-2">
+            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-50">© 2024 Radio Mundo Actual. Todos los derechos reservados.</p>
+            <p class="text-[10px] uppercase tracking-[0.2em] text-primary/60 font-medium">Web desarrollada por <span class="text-primary font-bold">Bonilla Stack</span></p>
+        </div>
+    </footer>
+
+    <script>
+        const URL_SHEET = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTWF0rVSrrOlpsM6ecoQzX7n0oG1jOZPDqCs4X6SAfmyE3uWJsF_lU1pMRlG9acnUc2y91-1VpC_I7B/pub?output=csv'; 
+
+        async function cargarProgramacion() {
+            try {
+                const response = await fetch(URL_SHEET);
+                const csvText = await response.text();
+                procesarCSV(csvText);
+            } catch (e) {
+                console.error("Error Google Sheets:", e);
+                procesarCSV("hora,titulo,locutores,descripcion,imagen\n08:00,Radio Mundo Actual,Locutor,En vivo,");
+            }
+        }
+
+        function procesarCSV(csvText) {
+            const filas = csvText.split('\n');
+            const programacion = filas.map(fila => {
+                const campos = fila.split(',');
+                const camposValidos = campos.filter(c => c.trim().length > 0);
+                if (camposValidos.length < 3) return null;
+                if (campos[0].toLowerCase().includes('hora') || campos[1].toLowerCase().includes('titulo')) return null;
+
+                let horaStr = campos[0].trim();
+                let imgRaw = (campos[4] || '').trim();
+                let imgUrl = '';
+
+                const driveMatch = imgRaw.match(/[-\w]{25,}/);
+                let idDrive = driveMatch ? driveMatch[0] : null;
+
+                if (idDrive) {
+                    imgUrl = `https://wsrv.nl/?url=https://drive.google.com/uc?id=${idDrive}`;
+                } else {
+                    imgUrl = 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=800';
+                }
+
+                return {
+                    hora: horaStr,
+                    minutos: parseHoraAMinutos(horaStr),
+                    id_drive: idDrive,
+                    titulo: campos[1].trim(),
+                    locutores: campos[2].trim(),
+                    descripcion: (campos[3] || '').trim(),
+                    imagen: imgUrl
+                };
+            }).filter(p => p !== null).sort((a, b) => a.minutos - b.minutos);
+
+            actualizarInterfaz(programacion);
+        }
+
+        function parseHoraAMinutos(horaStr) {
+            const h = horaStr.toLowerCase();
+            const match = h.match(/(\d+):(\d+)(?::\d+)?\s*(a\.m\.|p\.m\.|am|pm)?/);
+            if (!match) return 0;
+            let horas = parseInt(match[1]);
+            const minutos = parseInt(match[2]);
+            const meridiano = match[3];
+            if (meridiano && meridiano.includes('p') && horas < 12) horas += 12;
+            if (meridiano && meridiano.includes('a') && horas === 12) horas = 0;
+            return horas * 60 + minutos;
+        }
+
+        function actualizarInterfaz(programacion) {
+            if (!programacion || programacion.length === 0) return;
+            const ahora = new Date();
+            const opciones = { timeZone: 'America/Managua', hour12: false, hour: 'numeric', minute: 'numeric' };
+            const nicaHoraStr = ahora.toLocaleString('en-US', opciones);
+            const [h, m] = nicaHoraStr.split(':').map(Number);
+            const nicaMinutos = h * 60 + m;
+
+            let indiceActivo = 0;
+            for (let i = 0; i < programacion.length; i++) {
+                if (nicaMinutos >= programacion[i].minutos) indiceActivo = i;
+            }
+
+            const prog = programacion[indiceActivo];
+            const elTitulo = document.getElementById('hero-titulo');
+            const elLocutores = document.getElementById('hero-locutores');
+            const elDescripcion = document.getElementById('hero-descripcion');
+            const elImagen = document.getElementById('hero-imagen');
+
+            if (elTitulo) elTitulo.textContent = prog.titulo;
+            if (elLocutores) elLocutores.textContent = prog.locutores;
+            if (elDescripcion) elDescripcion.textContent = prog.descripcion;
+            if (elImagen) elImagen.src = prog.imagen;
+
+            const container = document.getElementById('schedule-container');
+            if (container) {
+                container.innerHTML = '';
+                programacion.forEach((p, index) => {
+                    const isLive = index === indiceActivo;
+                    const bgClass = isLive ? 'bg-secondary-container' : (index % 2 === 0 ? 'surface-low' : 'surface-lowest');
+                    container.innerHTML += `
+                        <div class="${bgClass} p-6 rounded-lg flex items-center justify-between">
+                            <div class="flex items-center gap-6">
+                                <span class="text-2xl font-bold ${isLive ? 'text-on-secondary-container' : 'text-primary/30'}">${p.hora}</span>
+                                <div>
+                                    <h3 class="font-bold ${isLive ? 'text-on-secondary-container' : 'text-primary'}">${p.titulo}</h3>
+                                    <p class="text-sm opacity-70">${p.locutores}</p>
+                                </div>
+                            </div>
+                            ${isLive ? '<span class="bg-on-secondary-container text-white text-[10px] font-bold px-3 py-1 rounded-full animate-pulse">EN VIVO</span>' : ''}
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        const playButton = document.getElementById('play-button');
+        const playIcon = document.getElementById('play-icon');
+        const audio = document.getElementById('radio-audio');
+        const bars = document.querySelectorAll('#waveform div');
+
+        // Modal Lotería
+        const loteriaPromo = document.getElementById('loteria-promo');
+        const loteriaModal = document.getElementById('loteria-modal');
+        const closeModal = document.getElementById('close-modal');
+        const loteriaContent = document.getElementById('loteria-content');
+        const loteriaLoading = document.getElementById('loteria-loading');
+
+        async function fetchLoteria() {
+            if (!loteriaContent) return;
+            loteriaContent.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full space-y-4" id="loteria-loading">
+                    <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p class="label-md opacity-50 font-bold">Obteniendo SOLO resultados anteriores...</p>
+                </div>`;
+
+            try {
+                const url = `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.loterianacional.com.ni/resultados/')}&ts=${Date.now()}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.contents, 'text/html');
+                
+                // --- BÚSQUEDA QUIRÚRGICA ---
+                // Buscamos la tabla específica por su ID único
+                const tablaUnica = doc.getElementById('tabla-resultados-anteriores');
+                
+                if (tablaUnica) {
+                    loteriaContent.innerHTML = `
+                        <div class="animate-fade-in p-1">
+                            <div class="flex items-center justify-center gap-2 mb-6">
+                                <span class="material-symbols-outlined text-primary text-xl">history</span>
+                                <h2 class="text-lg font-bold text-center text-primary uppercase tracking-tight">Resultados Anteriores</h2>
+                            </div>
+                            <!-- Contenedor con scroll horizontal para móvil -->
+                            <div class="overflow-x-auto rounded-xl border border-primary/10 shadow-lg bg-white">
+                                <div class="min-w-[500px]"> <!-- Forzar ancho mínimo para que sea legible -->
+                                    ${tablaUnica.outerHTML}
+                                </div>
+                            </div>
+                        </div>
+                        <style>
+                            #loteria-content table { width: 100%; border-collapse: collapse; background: white; }
+                            #loteria-content th { background: #1e293b; color: white; padding: 12px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #334155; white-space: nowrap; }
+                            #loteria-content td { padding: 10px 8px; border: 1px solid #e2e8f0; text-align: center; color: #1e293b; font-weight: 500; font-size: 13px; white-space: nowrap; }
+                            #loteria-content tr:nth-child(even) { background: #f8fafc; }
+                            #loteria-content tr:hover { background: #f1f5f9; cursor: default; }
+                            #loteria-content a { pointer-events: none; color: inherit; text-decoration: none; }
+                        </style>
+                    `;
+                } else {
+                    loteriaContent.innerHTML = '<div class="text-center p-12 opacity-50">No se encontró la tabla de historial. El sitio oficial podría haber cambiado de diseño.</div>';
+                }
+            } catch (e) {
+                console.error("Error loteria:", e);
+                loteriaContent.innerHTML = '<div class="text-center p-12 opacity-50">Error de conexión. Intente de nuevo en unos segundos.</div>';
+            }
+        }
+
+        if (loteriaPromo) {
+            loteriaPromo.addEventListener('click', () => {
+                loteriaModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                fetchLoteria(); // Consultar siempre al abrir
+            });
+        }
+
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                loteriaModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            });
+        }
+
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                loteriaModal.classList.add('hidden');
+                document.body.style.overflow = 'auto'; // Restaurar scroll
+            });
+        }
+
+        // Cerrar al click afuera
+        if (loteriaModal) {
+            loteriaModal.addEventListener('click', (e) => {
+                if (e.target === loteriaModal) {
+                    loteriaModal.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+
+        playButton.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.load();
+                audio.play().then(() => {
+                    playIcon.textContent = 'pause';
+                    bars.forEach(bar => bar.style.animationPlayState = 'running');
+                }).catch(e => console.error("Error play:", e));
+            } else {
+                audio.pause();
+                playIcon.textContent = 'play_arrow';
+                bars.forEach(bar => bar.style.animationPlayState = 'paused');
+            }
+        });
+
+        async function updateMetadata() {
+            const elMetadata = document.getElementById('zeno-metadata');
+            if (!elMetadata) return;
+            try {
+                // Endpoint de Zeno para tu radio
+                const res = await fetch('https://api.zeno.fm/mounts/metadata/subscribe/0v7shv53u08uv');
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value);
+                    // Zeno envía eventos tipo "data: {...}"
+                    const match = chunk.match(/data:\s*({.+})/);
+                    if (match) {
+                        const data = JSON.parse(match[1]);
+                        if (data.streamTitle) {
+                            elMetadata.textContent = data.streamTitle;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Metadata error:", e);
+                elMetadata.textContent = "Radio Mundo Actual";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarProgramacion();
+            updateMetadata(); // Iniciar metadatos
+        });
+    </script>
+</body>
+</html>
