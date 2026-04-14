@@ -190,15 +190,18 @@
         }
 
         function procesarCSV(csvText) {
-            const filas = csvText.split('\n');
+            // Regex mejorada para manejar comas dentro de comillas (estándar CSV)
+            const filas = csvText.split(/\r?\n/);
             const programacion = filas.map(fila => {
-                const campos = fila.split(',');
+                // Split inteligente que respeta comas dentro de descripciones
+                const campos = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                
                 const camposValidos = campos.filter(c => c.trim().length > 0);
                 if (camposValidos.length < 3) return null;
                 if (campos[0].toLowerCase().includes('hora') || campos[1].toLowerCase().includes('titulo')) return null;
 
-                let horaStr = campos[0].trim();
-                let imgRaw = (campos[4] || '').trim();
+                let horaStr = campos[0].trim().replace(/^"|"$/g, '');
+                let imgRaw = (campos[4] || '').trim().replace(/^"|"$/g, '');
                 let imgUrl = '';
 
                 const driveMatch = imgRaw.match(/[-\w]{25,}/);
@@ -214,9 +217,9 @@
                     hora: horaStr,
                     minutos: parseHoraAMinutos(horaStr),
                     id_drive: idDrive,
-                    titulo: campos[1].trim(),
-                    locutores: campos[2].trim(),
-                    descripcion: (campos[3] || '').trim(),
+                    titulo: campos[1].trim().replace(/^"|"$/g, ''),
+                    locutores: campos[2].trim().replace(/^"|"$/g, ''),
+                    descripcion: (campos[3] || '').trim().replace(/^"|"$/g, ''),
                     imagen: imgUrl
                 };
             }).filter(p => p !== null).sort((a, b) => a.minutos - b.minutos);
