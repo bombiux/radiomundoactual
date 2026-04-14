@@ -256,7 +256,7 @@
             const elImagen = document.getElementById('hero-imagen');
 
             if (elTitulo) elTitulo.textContent = prog.titulo;
-            if (elLocutores) elLocutores.textContent = prog.locutores;
+            if (elLocutores) elLocutores.textContent = `Locutor: ${prog.locutores}`;
             if (elDescripcion) elDescripcion.textContent = prog.descripcion;
             if (elImagen) elImagen.src = prog.imagen;
 
@@ -272,7 +272,7 @@
                                 <span class="text-2xl font-bold ${isLive ? 'text-on-secondary-container' : 'text-primary/30'}">${p.hora}</span>
                                 <div>
                                     <h3 class="font-bold ${isLive ? 'text-on-secondary-container' : 'text-primary'}">${p.titulo}</h3>
-                                    <p class="text-sm opacity-70">${p.locutores}</p>
+                                    <p class="text-sm opacity-70">Locutor: ${p.locutores}</p>
                                 </div>
                             </div>
                             ${isLive ? '<span class="bg-on-secondary-container text-white text-[10px] font-bold px-3 py-1 rounded-full animate-pulse">EN VIVO</span>' : ''}
