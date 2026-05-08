@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
     <!-- Icons -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" />
     <!-- Style -->
     <link rel="stylesheet" href="/src/style.css">
 </head>
@@ -19,16 +19,16 @@
     <header class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md px-6 py-4 flex justify-center items-center ghost-border">
         <div class="flex items-center gap-4">
             <img src="/src/assets/logo.png" alt="Radio Mundo Actual" class="h-20 w-auto object-contain">
-            <span class="bg-secondary-fixed text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest">EN VIVO</span>
+            <span id="header-time" class="bg-secondary-fixed text-on-secondary-container text-sm font-bold px-3 py-1 rounded-sm uppercase tracking-widest">--:-- --</span>
         </div>
     </header>
 
     <main class="mt-20">
         <!-- Hero Section -->
-        <section class="hero-gradient min-h-[80vh] flex items-center px-6 md:px-12 py-20 text-on-primary relative overflow-hidden">
-            <div class="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center z-10">
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3">
+        <section class="hero-gradient min-h-[85vh] flex items-center px-6 md:px-12 py-20 text-on-primary relative overflow-hidden">
+            <div class="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center z-10">
+                <div class="space-y-6 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start gap-3">
                          <div class="w-3 h-3 rounded-full bg-secondary-fixed animate-pulse shadow-[0_0_15px_rgba(146,252,94,0.5)]"></div>
                          <span class="editorial-tag text-secondary-fixed uppercase tracking-[0.2em]">EN VIVO AHORA</span>
                     </div>
@@ -36,25 +36,28 @@
                         <h1 id="hero-titulo" class="display-lg">Cargando...</h1>
                         <p id="hero-locutores" class="text-2xl md:text-3xl text-secondary-fixed/90 font-light italic"></p>
                     </div>
-                    <p id="hero-descripcion" class="text-xl opacity-80 max-w-xl font-light leading-relaxed"></p>
+                    <p id="hero-descripcion" class="text-xl opacity-80 max-w-xl mx-auto md:mx-0 font-light leading-relaxed"></p>
                 </div>
                 <div class="relative flex justify-center">
-                    <div class="aspect-[4/5] w-full max-w-[400px] rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] rotate-3 hover:rotate-0 transition-transform duration-700 ghost-border">
+                    <div class="aspect-[4/5] w-full max-w-[400px] rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] rotate-3 hover:rotate-0 transition-all duration-700 ghost-border">
                         <img id="hero-imagen" src="" alt="Programa en Vivo" class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Player -->
         <div class="px-6 md:px-12 -mt-12 relative z-20">
-            <div class="glass-player px-8 py-6 rounded-xl flex items-center justify-between shadow-2xl">
+            <div class="glass-player max-w-4xl mx-auto px-8 py-6 rounded-xl flex items-center justify-between shadow-2xl">
                 <div class="flex items-center gap-8 flex-grow">
                     <button id="play-button" class="w-16 h-16 rounded-full bg-secondary-fixed text-on-secondary-container flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-secondary-fixed/20">
                         <span class="material-symbols-outlined text-4xl" id="play-icon">play_arrow</span>
                     </button>
-                    <audio id="radio-audio" src="https://stream.zeno.fm/0v7shv53u08uv" preload="none"></audio>
+                    <audio id="radio-audio" src="https://stream4.rcast.net/73670" preload="none"></audio>
                     <div class="hidden md:block flex-grow">
+                        <div class="flex items-center gap-2 mb-2">
+                             <span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+                             <p id="radio-metadata" class="text-secondary-fixed font-black uppercase tracking-widest text-[10px] truncate">Radio Mundo Actual</p>
+                        </div>
                         <div class="flex items-end gap-1.5 h-10" id="waveform">
                             <div class="w-1 bg-secondary-fixed h-4 animate-[pulse_1s_infinite]"></div>
                             <div class="w-1 bg-secondary-fixed h-8 animate-[pulse_1.2s_infinite]"></div>
@@ -179,34 +182,129 @@
         const URL_SHEET = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTWF0rVSrrOlpsM6ecoQzX7n0oG1jOZPDqCs4X6SAfmyE3uWJsF_lU1pMRlG9acnUc2y91-1VpC_I7B/pub?output=csv'; 
 
         async function cargarProgramacion() {
+            console.log("Iniciando carga de programación...");
             try {
-                const response = await fetch(URL_SHEET);
+                // Intentamos carga directa primero (más rápido y limpio)
+                const response = await fetch(URL_SHEET + '&ts=' + Date.now());
+                if (!response.ok) throw new Error("Error en respuesta directa");
                 const csvText = await response.text();
                 procesarCSV(csvText);
             } catch (e) {
-                console.error("Error Google Sheets:", e);
-                procesarCSV("hora,titulo,locutores,descripcion,imagen\n08:00,Radio Mundo Actual,Locutor,En vivo,");
+                console.warn("Fallo carga directa, intentando con proxy:", e);
+                try {
+                    // Usamos corsproxy.io como alternativa robusta
+                    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(URL_SHEET + '&ts=' + Date.now())}`;
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error("Error en respuesta del proxy");
+                    const csvText = await response.text();
+                    procesarCSV(csvText);
+                } catch (e2) {
+                    console.error("Error definitivo cargando Sheets:", e2);
+                    actualizarInterfaz([]); 
+                }
             }
         }
 
-        function procesarCSV(csvText) {
-            // Regex mejorada para manejar comas dentro de comillas (estándar CSV)
-            const filas = csvText.split(/\r?\n/);
-            const programacion = filas.map(fila => {
-                // Split inteligente que respeta comas dentro de descripciones
-                const campos = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                
-                const camposValidos = campos.filter(c => c.trim().length > 0);
-                if (camposValidos.length < 3) return null;
-                if (campos[0].toLowerCase().includes('hora') || campos[1].toLowerCase().includes('titulo')) return null;
+        function programaAplicaHoy(diasStr) {
+            if (!diasStr) return true;
+            const ahora = new Date();
+            const nicaDay = new Intl.DateTimeFormat('es-NI', { weekday: 'long', timeZone: 'America/Managua' }).format(ahora).toLowerCase();
+            const d = diasStr.toLowerCase().trim();
 
-                let horaStr = campos[0].trim().replace(/^"|"$/g, '');
-                let imgRaw = (campos[4] || '').trim().replace(/^"|"$/g, '');
+            const diasSemana = ['lunes', 'martes', 'miércoles', 'miercoles', 'jueves', 'viernes'];
+            const esSemana = diasSemana.includes(nicaDay);
+
+            if (d === 'l-v' && esSemana) return true;
+            if (d === 'l-s' && (esSemana || nicaDay.includes('sáb') || nicaDay.includes('sab'))) return true;
+            if (d === 'diario' || d === 'l-d') return true;
+            
+            // Soporte para M (Martes) o J (Jueves)
+            if (d === 'm' && (nicaDay === 'martes')) return true;
+            if (d === 'j' && (nicaDay === 'jueves')) return true;
+
+            // Verificación por iniciales o día completo
+            if (d.includes(nicaDay.substring(0, 3))) return true;
+
+            return false;
+        }
+
+        function parseHoraAMinutos(horaStr) {
+            if (!horaStr) return 0;
+            const h = horaStr.toLowerCase().replace(/\./g, '').replace(/\s/g, '');
+            const match = h.match(/(\d+):(\d+)(am|pm)?/);
+            if (!match) return 0;
+            
+            let horas = parseInt(match[1]);
+            const minutos = parseInt(match[2]);
+            const meridiano = match[3];
+
+            if (meridiano === 'pm' && horas < 12) horas += 12;
+            if (meridiano === 'am' && horas === 12) horas = 0;
+            return horas * 60 + minutos;
+        }
+
+        function procesarCSV(csvText) {
+            function parseCSVLine(text) {
+                const result = [];
+                let curValue = '';
+                let inQuotes = false;
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(curValue.trim());
+                        curValue = '';
+                    } else {
+                        curValue += char;
+                    }
+                }
+                result.push(curValue.trim());
+                return result;
+            }
+
+            const todasLasFilas = csvText.split(/\r?\n/).filter(f => f.trim() !== '');
+            if (todasLasFilas.length === 0) return actualizarInterfaz([]);
+
+            let headerIdx = -1;
+            for (let i = 0; i < todasLasFilas.length; i++) {
+                const row = todasLasFilas[i].toLowerCase();
+                if (row.includes('hora') || row.includes('titulo') || row.includes('título')) {
+                    headerIdx = i;
+                    break;
+                }
+            }
+
+            if (headerIdx === -1) {
+                console.error("No se encontró la fila de encabezados.");
+                return actualizarInterfaz([]);
+            }
+
+            const headers = parseCSVLine(todasLasFilas[headerIdx]).map(h => h.toLowerCase().replace(/^"|"$/g, '').trim());
+            const findIdx = (names) => headers.findIndex(h => names.some(n => h === n || h.includes(n)));
+
+            const idxHora = findIdx(['hora', 'time']);
+            const idxTitulo = findIdx(['titulo', 'título', 'title', 'programa']);
+            const idxLocutores = findIdx(['locutor', 'host', 'quien', 'locutores']);
+            const idxDesc = findIdx(['desc', 'info', 'descripcion', 'descripción']);
+            const idxImg = findIdx(['imagen', 'img', 'foto', 'picture']);
+            const idxDias = findIdx(['dia', 'día', 'cuando', 'when', 'dias']);
+
+            const programacion = todasLasFilas.slice(headerIdx + 1).map(fila => {
+                const campos = parseCSVLine(fila);
+                if (campos.length <= Math.max(idxHora, idxTitulo)) return null;
+
+                const getCampo = (idx) => (idx !== -1 && campos[idx]) ? campos[idx].replace(/^"|"$/g, '').trim() : '';
+                const diasRaw = getCampo(idxDias) || 'Diario';
+                
+                if (!programaAplicaHoy(diasRaw)) return null;
+
+                let horaStr = getCampo(idxHora);
+                let imgRaw = getCampo(idxImg);
                 let imgUrl = '';
 
                 const driveMatch = imgRaw.match(/[-\w]{25,}/);
                 let idDrive = driveMatch ? driveMatch[0] : null;
-
                 if (idDrive) {
                     imgUrl = `https://wsrv.nl/?url=https://drive.google.com/uc?id=${idDrive}`;
                 } else {
@@ -216,63 +314,60 @@
                 return {
                     hora: horaStr,
                     minutos: parseHoraAMinutos(horaStr),
-                    id_drive: idDrive,
-                    titulo: campos[1].trim().replace(/^"|"$/g, ''),
-                    locutores: campos[2].trim().replace(/^"|"$/g, ''),
-                    descripcion: (campos[3] || '').trim().replace(/^"|"$/g, ''),
-                    imagen: imgUrl
+                    titulo: getCampo(idxTitulo),
+                    locutores: getCampo(idxLocutores),
+                    descripcion: getCampo(idxDesc),
+                    imagen: imgUrl,
+                    dias: diasRaw
                 };
             }).filter(p => p !== null).sort((a, b) => a.minutos - b.minutos);
 
             actualizarInterfaz(programacion);
         }
 
-        function parseHoraAMinutos(horaStr) {
-            const h = horaStr.toLowerCase();
-            const match = h.match(/(\d+):(\d+)(?::\d+)?\s*(a\.m\.|p\.m\.|am|pm)?/);
-            if (!match) return 0;
-            let horas = parseInt(match[1]);
-            const minutos = parseInt(match[2]);
-            const meridiano = match[3];
-            if (meridiano && meridiano.includes('p') && horas < 12) horas += 12;
-            if (meridiano && meridiano.includes('a') && horas === 12) horas = 0;
-            return horas * 60 + minutos;
-        }
-
         function actualizarInterfaz(programacion) {
-            if (!programacion || programacion.length === 0) return;
-            const ahora = new Date();
-            const opciones = { timeZone: 'America/Managua', hour12: false, hour: 'numeric', minute: 'numeric' };
-            const nicaHoraStr = ahora.toLocaleString('en-US', opciones);
-            const [h, m] = nicaHoraStr.split(':').map(Number);
-            const nicaMinutos = h * 60 + m;
-
-            let indiceActivo = 0;
-            for (let i = 0; i < programacion.length; i++) {
-                if (nicaMinutos >= programacion[i].minutos) indiceActivo = i;
-            }
-
-            const prog = programacion[indiceActivo];
+            const container = document.getElementById('schedule-container');
             const elTitulo = document.getElementById('hero-titulo');
             const elLocutores = document.getElementById('hero-locutores');
             const elDescripcion = document.getElementById('hero-descripcion');
             const elImagen = document.getElementById('hero-imagen');
 
-            if (elTitulo) elTitulo.textContent = prog.titulo;
-            if (elLocutores) elLocutores.textContent = `Locutor: ${prog.locutores}`;
-            if (elDescripcion) elDescripcion.textContent = prog.descripcion;
-            if (elImagen) elImagen.src = prog.imagen;
+            const fallbackImagen = '/src/assets/default.jpeg';
 
-            const container = document.getElementById('schedule-container');
+            if (!programacion || programacion.length === 0) {
+                if (container) container.innerHTML = '<p class="text-center py-10 opacity-50 uppercase tracking-widest text-xs">Programación no disponible hoy</p>';
+                elTitulo.textContent = 'Radio Mundo Actual';
+                elLocutores.textContent = 'En Vivo desde Nicaragua';
+                elDescripcion.textContent = 'Sintoniza nuestra señal con la mejor programación.';
+                elImagen.src = fallbackImagen;
+                return;
+            }
+
+            const ahora = new Date();
+            const nicaHoraStr = ahora.toLocaleString('en-US', { timeZone: 'America/Managua', hour12: false, hour: 'numeric', minute: 'numeric' });
+            const [h, m] = nicaHoraStr.split(':').map(Number);
+            const nicaMinutos = h * 60 + m;
+
+            let indiceActivo = -1;
+            for (let i = 0; i < programacion.length; i++) {
+                if (nicaMinutos >= programacion[i].minutos) indiceActivo = i;
+            }
+
+            const prog = indiceActivo === -1 ? programacion[0] : programacion[indiceActivo];
+            elTitulo.textContent = prog.titulo;
+            elLocutores.textContent = `Locutor: ${prog.locutores}`;
+            elDescripcion.textContent = prog.descripcion;
+            elImagen.src = prog.imagen || fallbackImagen;
+
             if (container) {
                 container.innerHTML = '';
                 programacion.forEach((p, index) => {
                     const isLive = index === indiceActivo;
-                    const bgClass = isLive ? 'bg-secondary-container' : (index % 2 === 0 ? 'surface-low' : 'surface-lowest');
+                    const bgClass = isLive ? 'bg-secondary-container' : (index % 2 === 0 ? 'bg-surface-low' : 'bg-white');
                     container.innerHTML += `
-                        <div class="${bgClass} p-6 rounded-lg flex items-center justify-between">
+                        <div class="${bgClass} p-6 rounded-lg flex items-center justify-between border-b border-on-primary/5">
                             <div class="flex items-center gap-6">
-                                <span class="text-2xl font-bold ${isLive ? 'text-on-secondary-container' : 'text-primary/30'}">${p.hora}</span>
+                                <span class="text-2xl font-bold ${isLive ? 'text-on-secondary-container' : 'text-primary/30'}">${p.hora.replace(/\s*[ap]\.m\./i, '')}</span>
                                 <div>
                                     <h3 class="font-bold ${isLive ? 'text-on-secondary-container' : 'text-primary'}">${p.titulo}</h3>
                                     <p class="text-sm opacity-70">Locutor: ${p.locutores}</p>
@@ -306,15 +401,16 @@
                 </div>`;
 
             try {
-                const url = `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.loterianacional.com.ni/resultados/')}&ts=${Date.now()}`;
-                const res = await fetch(url);
-                const data = await res.json();
+                const targetUrl = 'https://www.loterianacional.com.ni/resultados/';
+                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl + '?ts=' + Date.now())}`;
+                const res = await fetch(proxyUrl);
+                if (!res.ok) throw new Error("Proxy error");
+                const html = await res.text();
                 
                 const parser = new DOMParser();
-                const doc = parser.parseFromString(data.contents, 'text/html');
+                const doc = parser.parseFromString(html, 'text/html');
                 
                 // --- BÚSQUEDA QUIRÚRGICA ---
-                // Buscamos la tabla específica por su ID único
                 const tablaUnica = doc.getElementById('tabla-resultados-anteriores');
                 
                 if (tablaUnica) {
@@ -324,9 +420,8 @@
                                 <span class="material-symbols-outlined text-primary text-xl">history</span>
                                 <h2 class="text-lg font-bold text-center text-primary uppercase tracking-tight">Resultados Anteriores</h2>
                             </div>
-                            <!-- Contenedor con scroll horizontal para móvil -->
                             <div class="overflow-x-auto rounded-xl border border-primary/10 shadow-lg bg-white">
-                                <div class="min-w-[500px]"> <!-- Forzar ancho mínimo para que sea legible -->
+                                <div class="min-w-[500px]">
                                     ${tablaUnica.outerHTML}
                                 </div>
                             </div>
@@ -384,10 +479,19 @@
         playButton.addEventListener('click', () => {
             if (audio.paused) {
                 audio.load();
-                audio.play().then(() => {
-                    playIcon.textContent = 'pause';
-                    bars.forEach(bar => bar.style.animationPlayState = 'running');
-                }).catch(e => console.error("Error play:", e));
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        playIcon.textContent = 'pause';
+                        bars.forEach(bar => bar.style.animationPlayState = 'running');
+                    }).catch(e => {
+                        if (e.name === 'AbortError') {
+                            console.log("Reproducción interrumpida por pausa (esperado).");
+                        } else {
+                            console.error("Error play:", e);
+                        }
+                    });
+                }
             } else {
                 audio.pause();
                 playIcon.textContent = 'play_arrow';
@@ -396,36 +500,55 @@
         });
 
         async function updateMetadata() {
-            const elMetadata = document.getElementById('zeno-metadata');
+            const elMetadata = document.getElementById('radio-metadata');
             if (!elMetadata) return;
-            try {
-                // Endpoint de Zeno para tu radio
-                const res = await fetch('https://api.zeno.fm/mounts/metadata/subscribe/0v7shv53u08uv');
-                const reader = res.body.getReader();
-                const decoder = new TextDecoder();
-                
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value);
-                    // Zeno envía eventos tipo "data: {...}"
-                    const match = chunk.match(/data:\s*({.+})/);
-                    if (match) {
-                        const data = JSON.parse(match[1]);
-                        if (data.streamTitle) {
-                            elMetadata.textContent = data.streamTitle;
-                        }
+            
+            async function fetchRCast() {
+                try {
+                    // RCast suele exponer estadísticas en /stats
+                    // Usamos el proxy para evitar CORS
+                    const targetUrl = 'https://stream4.rcast.net/73670/stats';
+                    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl + '?ts=' + Date.now())}`;
+                    const res = await fetch(proxyUrl);
+                    if (!res.ok) throw new Error("RCast stats error");
+                    const data = await res.json();
+                    
+                    // Shoutcast v2 JSON format
+                    if (data && data.songtitle) {
+                        elMetadata.textContent = data.songtitle;
+                    } else if (data && data.streams && data.streams[0] && data.streams[0].songtitle) {
+                        elMetadata.textContent = data.streams[0].songtitle;
                     }
+                } catch (e) {
+                    console.warn("Error obteniendo metadatos de RCast:", e);
+                    // No cambiamos el texto si falla, para mantener el nombre de la radio
                 }
-            } catch (e) {
-                console.error("Metadata error:", e);
-                elMetadata.textContent = "Radio Mundo Actual";
             }
+
+            // Para RCast no tenemos un stream de eventos (SSE) como en Zeno,
+            // así que consultamos periódicamente (cada 20 segundos)
+            fetchRCast();
+            setInterval(fetchRCast, 20000);
+        }
+
+        function updateClock() {
+            const elClock = document.getElementById('header-time');
+            if (!elClock) return;
+            const ahora = new Date();
+            const nicaTime = ahora.toLocaleTimeString('en-US', { 
+                timeZone: 'America/Managua', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            elClock.textContent = nicaTime;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             cargarProgramacion();
-            updateMetadata(); // Iniciar metadatos
+            updateMetadata();
+            updateClock();
+            setInterval(updateClock, 30000); // Actualizar cada 30 segundos
         });
     </script>
 </body>
