@@ -219,7 +219,6 @@
             const ahora = new Date();
             const nicaDayFull = new Intl.DateTimeFormat('es-NI', { weekday: 'long', timeZone: 'America/Managua' }).format(ahora).toLowerCase();
             
-            // Función para quitar acentos
             const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
             
             const nicaDay = normalizar(nicaDayFull);
@@ -228,17 +227,19 @@
             const diasSemana = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
             const esSemana = diasSemana.includes(nicaDay);
 
+            // Formatos específicos del usuario
+            if (d === 's' && nicaDay === 'sabado') return true;
+            if (d === 'd' && nicaDay === 'domingo') return true;
+            if (d === 's-d' && (nicaDay === 'sabado' || nicaDay === 'domingo')) return true;
+
+            // Otros formatos estándar
             if (d === 'l-v' && esSemana) return true;
             if (d === 'l-s' && (esSemana || nicaDay === 'sabado')) return true;
             if (d === 'diario' || d === 'l-d' || d === 'l-v-s-d') return true;
-            
-            // Soporte para Sábado o Domingo específicos
-            if (d === 'sabado' && nicaDay === 'sabado') return true;
-            if (d === 'domingo' && nicaDay === 'domingo') return true;
             if (d === 'f-s' && (nicaDay === 'sabado' || nicaDay === 'domingo')) return true;
 
-            // Verificación por iniciales (primero 3 letras)
-            if (d.includes(nicaDay.substring(0, 3))) return true;
+            // Soporte para días específicos completos o abreviaturas de 3 letras
+            if (d === nicaDay || d.includes(nicaDay.substring(0, 3))) return true;
 
             return false;
         }
